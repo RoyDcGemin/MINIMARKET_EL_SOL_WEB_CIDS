@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PROYECTO_EL_SOL_WEB - Sistema de Ventas del Minimarket "El Sol".
+  Curso Integrador I - Desarrollo de Software.
+
+  Arquitectura: MVC + DAO + DTO + Singleton (Jakarta EE 6.0, JSP/JSTL,
+  MySQL 8 y OpenPDF para el comprobante).
+  Build: mvn clean package  ->  genera el WAR en target/.
+  Despliegue: Tomcat 10.1 (servlet 6.0) o superior; copiar el WAR a webapps/.
+  BD: MySQL 8 (ver elsol_db.sql y util.Conexion).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.elsol</groupId>
+    <artifactId>PROYECTO_EL_SOL_WEB</artifactId>
+    <version>1.0.0</version>
+    <packaging>war</packaging>
+
+    <name>Minimarket El Sol - Sistema de Ventas (Web)</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
+    </properties>
+
+    <dependencies>
+        <!-- Jakarta Servlet API: la proporciona Tomcat 10.1 (scope provided). -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSTL: etiquetas (<c:forEach>, <c:if>, ...) para las vistas JSP.
+             Tomcat NO incluye JSTL, por eso la API tambien viaja en el WAR. -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Driver de MySQL (conector oficial). La BD vive en el servidor,
+             ya no en un archivo local como con SQLite. -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.4.0</version>
+        </dependency>
+
+        <!-- OpenPDF: genera el comprobante de venta en PDF al vuelo
+             (1 sola dependencia, sin configuracion de fuentes). -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.30</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>PROYECTO_EL_SOL_WEB</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
