@@ -1,0 +1,559 @@
+/* =========================================================================
+   HOJA DE ESTILOS - Sistema de Ventas (PROYECTO POO WEB)
+   =========================================================================
+   Convenciones:
+   - Selectores en espanol y descriptivos (ej.: .tabla-productos).
+   - Colores centralizados en :root mediante variables CSS.
+   - Cada seccion del CSS empieza con su comentario.
+   ========================================================================= */
+
+
+/* -------------------------------------------------------------------------
+   1) VARIABLES GENERALES (colores, radios, sombras, fuente)
+   ------------------------------------------------------------------------- */
+:root {
+    /* Colores principales */
+    --color-primario:       #234e70;   /* azul principal de la marca */
+    --color-primario-oscuro: #1a3b57;  /* version oscura (hover, cabecera) */
+    --color-fondo:          #f4f6f9;   /* fondo general de la pagina */
+    --color-tarjeta:        #ffffff;   /* fondo de tarjetas y tablas */
+    --color-texto:          #2c3e50;   /* texto principal */
+    --color-texto-suave:    #6b7785;   /* texto secundario */
+    --color-borde:          #d5dbe3;   /* bordes de tablas y campos */
+
+    /* Colores de estado */
+    --color-exito:          #2e7d32;   /* operaciones correctas */
+    --color-peligro:        #c0392b;   /* borrar, errores graves */
+    --color-info:           #2979ff;   /* informacion / enlaces */
+
+    /* Radios y sombras */
+    --radio-borde: 8px;
+    --sombra-suave: 0 1px 3px rgba(0, 0, 0, .12);
+
+    /* Fuente */
+    --fuente-sistema: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+
+/* -------------------------------------------------------------------------
+   2) BASE / REINICIO BASICO
+   ------------------------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--fuente-sistema);
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.5;
+}
+
+img {
+    max-width: 100%;
+}
+
+.contenido {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+
+/* -------------------------------------------------------------------------
+   3) CABECERA Y NAVEGACION
+   ------------------------------------------------------------------------- */
+.cabecera {
+    background: var(--color-primario);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+}
+
+.cabecera-contenido {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: .75rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.marca-icono {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+}
+
+.navegacion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.enlace-nav {
+    color: #e6edf5;
+    text-decoration: none;
+    padding: .4rem .7rem;
+    border-radius: var(--radio-borde);
+    font-size: .95rem;
+}
+
+.enlace-nav:hover,
+.enlace-nav:focus-visible {
+    background: rgba(255, 255, 255, .15);
+    color: #ffffff;
+}
+
+.usuario-sesion {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+.usuario-nombre {
+    font-weight: 600;
+}
+
+.enlace-secundario {
+    background: rgba(255, 255, 255, .12);
+}
+
+
+/* -------------------------------------------------------------------------
+   4) TARJETAS Y MENU PRINCIPAL
+   ------------------------------------------------------------------------- */
+.tarjeta {
+    background: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra-suave);
+    padding: 1.25rem;
+}
+
+.tarjeta-bienvenida {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.titulo-pagina {
+    margin: 0 0 .5rem;
+    color: var(--color-primario);
+    font-size: 1.6rem;
+}
+
+.parrilla-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.tarjeta-opcion {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.tarjeta-opcion:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .15);
+}
+
+.icono-opcion {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: .25rem;
+}
+
+.tarjeta-opcion h2 {
+    margin: .25rem 0;
+    color: var(--color-primario);
+    font-size: 1.1rem;
+}
+
+.tarjeta-opcion p {
+    margin: 0;
+    color: var(--color-texto-suave);
+    font-size: .92rem;
+}
+
+
+/* -------------------------------------------------------------------------
+   5) TABLAS (clientes, productos, categorias, historial...)
+   ------------------------------------------------------------------------- */
+.envoltorio-tabla {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-tarjeta);
+}
+
+.tabla thead th {
+    background: var(--color-primario);
+    color: #ffffff;
+    text-align: left;
+    padding: .6rem .75rem;
+    font-size: .9rem;
+}
+
+.tabla tbody td {
+    padding: .6rem .75rem;
+    border-bottom: 1px solid var(--color-borde);
+    font-size: .95rem;
+}
+
+.tabla tbody tr:nth-child(even) {
+    background: #f8fafc;   /* filas zebra */
+}
+
+.tabla tbody tr:hover {
+    background: #eef3fa;
+}
+
+/* Alineaciones utiles dentro de las tablas */
+.tabla .texto-derecha {
+    text-align: right;
+}
+
+.tabla .monto {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+
+/* -------------------------------------------------------------------------
+   6) FORMULARIOS
+   ------------------------------------------------------------------------- */
+.formulario {
+    display: grid;
+    gap: 1rem;
+    max-width: 480px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.campo label {
+    font-weight: 600;
+    font-size: .92rem;
+}
+
+/* Construimos el selector en espanol: > input es "hijo directo" */
+.campo > input,
+.campo > select,
+.campo > textarea {
+    padding: .6rem .75rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    font-size: 1rem;
+    font-family: inherit;
+    background: #ffffff;
+}
+
+.campo > input:focus,
+.campo > select:focus,
+.campo > textarea:focus {
+    outline: 2px solid var(--color-info);
+    outline-offset: 1px;
+    border-color: var(--color-info);
+}
+
+.campo > input[readonly] {
+    background: #eef1f5;
+    color: var(--color-texto-suave);
+}
+
+.ayuda-campo {
+    font-size: .82rem;
+    color: var(--color-texto-suave);
+}
+
+.errores-formulario {
+    background: #fdecea;
+    border: 1px solid var(--color-peligro);
+    color: var(--color-peligro);
+    padding: .75rem 1rem;
+    border-radius: var(--radio-borde);
+    font-size: .95rem;
+}
+
+.errores-formulario ul {
+    margin: .25rem 0 0;
+    padding-left: 1.25rem;
+}
+
+
+/* -------------------------------------------------------------------------
+   7) BOTONES
+   ------------------------------------------------------------------------- */
+.btn {
+    display: inline-block;
+    border: none;
+    border-radius: var(--radio-borde);
+    padding: .6rem 1.1rem;
+    font-size: .95rem;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background .12s ease, opacity .12s ease;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--color-info);
+    outline-offset: 2px;
+}
+
+.btn-primario {
+    background: var(--color-primario);
+    color: #ffffff;
+}
+
+.btn-primario:hover {
+    background: var(--color-primario-oscuro);
+}
+
+.btn-secundario {
+    background: #e6edf5;
+    color: var(--color-primario);
+}
+
+.btn-secundario:hover {
+    background: #d7e2ee;
+}
+
+.btn-peligro {
+    background: var(--color-peligro);
+    color: #ffffff;
+}
+
+.btn-peligro:hover {
+    background: #a43727;
+}
+
+.btn-ancho {
+    width: 100%;
+}
+
+.btn-pequeno {
+    padding: .35rem .75rem;
+    font-size: .85rem;
+}
+
+.grupo-botones {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-top: .5rem;
+}
+
+.grupo-botones .btn { 
+    margin: 0;
+}
+
+
+/* -------------------------------------------------------------------------
+   8) MENSAJES FLASH Y ERRORES
+   ------------------------------------------------------------------------- */
+.mensaje {
+    padding: .8rem 1rem;
+    border-radius: var(--radio-borde);
+    margin-bottom: 1rem;
+    font-size: .95rem;
+}
+
+.mensaje-exito {
+    background: #e8f5e9;
+    border: 1px solid var(--color-exito);
+    color: var(--color-exito);
+}
+
+.mensaje-error {
+    background: #fdecea;
+    border: 1px solid var(--color-peligro);
+    color: var(--color-peligro);
+}
+
+.mensaje-info {
+    background: #e8f0fe;
+    border: 1px solid var(--color-info);
+    color: var(--color-info);
+}
+
+
+/* -------------------------------------------------------------------------
+   9) LOGIN (pagina completa centrada)
+   ------------------------------------------------------------------------- */
+.cuerpo-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primario), var(--color-primario-oscuro));
+    padding: 1rem;
+}
+
+.tarjeta-login {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+    padding: 2rem 2.25rem;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+}
+
+.logotipo-login {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: var(--color-fondo);
+}
+
+.titulo-login {
+    margin: .75rem 0 .25rem;
+    color: var(--color-primario);
+    font-size: 1.4rem;
+}
+
+.subtitulo-login {
+    margin: 0 0 1.25rem;
+    color: var(--color-texto-suave);
+    font-size: .92rem;
+}
+
+.tarjeta-login .formulario {
+    text-align: left;
+}
+
+.nota-login {
+    margin-top: 1.25rem;
+    font-size: .85rem;
+    color: var(--color-texto-suave);
+}
+
+
+/* -------------------------------------------------------------------------
+   10) FACTURACION Y DETALLES (filas y totales)
+   ------------------------------------------------------------------------- */
+.panel-lateral {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.panel-lateral .tarjeta h2 {
+    margin-top: 0;
+    color: var(--color-primario);
+    font-size: 1.15rem;
+}
+
+.total-facturacion {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    text-align: right;
+    margin: .5rem 0;
+}
+
+.detalle-factura {
+    white-space: pre-line;
+    background: #f8fafc;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 1rem;
+}
+
+/* Boleta generada despues de facturar */
+.tarjeta-boleta {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.tabla-boleta-datos {
+    max-width: 460px;
+    margin-bottom: .5rem;
+}
+
+.celda-etiqueta {
+    font-weight: 600;
+    width: 130px;
+    background: #eef3fa;
+}
+
+.tabla tfoot th {
+    background: #eef3fa;
+    color: var(--color-primario);
+}
+
+
+/* -------------------------------------------------------------------------
+   11) PIE DE PAGINA
+   ------------------------------------------------------------------------- */
+.pie-pagina {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    color: var(--color-texto-suave);
+    font-size: .85rem;
+    border-top: 1px solid var(--color-borde);
+}
+
+
+/* -------------------------------------------------------------------------
+   12) AJUSTES RESPONSIVE
+   ------------------------------------------------------------------------- */
+@media (min-width: 860px) {
+    .panel-lateral {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .usuario-sesion {
+        margin-left: 0;
+        width: 100%;
+    }
+    .titulo-pagina {
+        font-size: 1.3rem;
+    }
+}
+/* Minimarket: alertas de stock bajo */
+.etiqueta-alerta {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: #fde68a;
+    color: #92400e;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.alerta-stock {
+    margin-top: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+}

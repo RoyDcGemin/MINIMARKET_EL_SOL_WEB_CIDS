@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="https://jakarta.ee/xml/ns/jakartaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                            https://jakarta.ee/xml/ns/jakartaee/jakartaee-5_0.xsd"
+        version="5.0">
+    <tlib-version>1.0</tlib-version>
+    <short-name>sol</short-name>
+    <uri>http://elsol/funciones</uri>
+    <description>
+        Funciones propias del proyecto usadas desde las vistas JSP.
+    </description>
+
+    <function>
+        <description>
+            Formatea un monto como moneda peruana, por ejemplo: S/. 1,200.50
+        </description>
+        <name>moneda</name>
+        <function-class>web.WebUtil</function-class>
+        <function-signature>java.lang.String formatearMonto(double)</function-signature>
+    </function>
+</taglib>
