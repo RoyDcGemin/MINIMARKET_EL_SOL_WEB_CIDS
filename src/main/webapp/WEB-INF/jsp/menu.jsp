@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <jsp:include page="cabecera.jsp">
     <jsp:param name="titulo" value="Menu"/>
@@ -23,7 +23,7 @@
     <a href="${pageContext.request.contextPath}/venta" class="tarjeta tarjeta-opcion">
         <span class="icono-opcion">&#128176;</span>
         <h2>Registrar Venta</h2>
-        <p>Venda por codigo o principio activo, calcule el total y emita el comprobante.</p>
+        <p>Venda por codigo o descripcion, calcule el total y emita el comprobante.</p>
     </a>
     <a href="${pageContext.request.contextPath}/cierre" class="tarjeta tarjeta-opcion">
         <span class="icono-opcion">&#128187;</span>
@@ -51,3 +51,4 @@
 </section>
 
 <jsp:include page="pie.jsp"/>
+

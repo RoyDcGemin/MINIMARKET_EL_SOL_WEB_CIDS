@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="sol" uri="http://elsol/funciones" %>
 <jsp:include page="cabecera.jsp">
@@ -20,10 +20,10 @@
             <input type="hidden" name="accion" value="agregar">
 
             <div class="campo">
-                <label for="codigo">Codigo del producto o principio activo</label>
+                <label for="codigo">Codigo del producto o descripcion</label>
                 <input type="text" id="codigo" name="codigo" required autofocus
                        placeholder="Ej.: F001 o paracetamol" maxlength="100" autocomplete="off">
-                <span class="ayuda-campo" id="info-producto">Digite el codigo y pulse OK (emula el scanner). Tambien acepta principio activo si es unico.</span>
+                <span class="ayuda-campo" id="info-producto">Digite el codigo y pulse OK (emula el scanner). Tambien acepta la descripcion si es unica.</span>
             </div>
             <div class="campo">
                 <label for="cantidad">Cantidad</label>
@@ -36,10 +36,10 @@
             </div>
         </form>
 
-        <h2>Pool de productos del minimarket</h2>
+        <h2>Productos disponibles</h2>
         <form action="${pageContext.request.contextPath}/venta" method="get" class="formulario">
             <div class="campo">
-                <label for="q">Buscar por codigo, nombre o principio activo</label>
+                <label for="q">Buscar por codigo, nombre o descripcion</label>
                 <input type="text" id="q" name="q" value="<c:out value='${q}'/>"
                        placeholder="Ej.: F001, paracetamol, Panadol" maxlength="100" autocomplete="off">
             </div>
@@ -205,3 +205,4 @@
 </script>
 
 <jsp:include page="pie.jsp"/>
+
