@@ -22,6 +22,8 @@ src/main/webapp/
 ├── WEB-INF/jsp/   Vistas (login, menu, venta, comprobante, cierre, reportes, productos, categorias)
 ├── css/ js/ img/  Recursos estáticos
 └── WEB-INF/tlds/  Función de formato de moneda
+src/main/resources/
+└── logback.xml    Configuración de logs (consola + archivo con rotación diaria)
 elsol_db.sql       Script de creación de la base de datos
 ```
 
@@ -74,6 +76,8 @@ La conexión se configura en `src/main/java/util/Conexion.java` (por defecto `jd
 | Consultas de 2 tablas (JOIN) | `modeloDAO/ProductoDAO.java` | `listarDTO()` (producto + categoria) |
 | Consultas de 3 tablas (JOIN) | `modeloDAO/VentaDAO.java` | `ingresosUtilidad()` (detalle + venta + producto) |
 | Esquema de la base de datos | `elsol_db.sql` | tablas, claves foráneas y datos de ejemplo |
+| Exportación del reporte a Excel | `web/ExportarExcelServlet.java` | `doGet()` con Apache POI |
+| Registro de eventos (logs) | `logback.xml` y DAOs | `LoggerFactory.getLogger(...)` |
 
 ---
 
@@ -152,3 +156,20 @@ git remote -v
 ```
 
 Repositorio: `https://github.com/<usuario>/<repositorio>`
+
+---
+
+## 9. Librerías de apoyo (rúbrica APF3)
+
+Todas son de código abierto y están declaradas en `pom.xml` con versión fija.
+
+| Librería | Versión | Dónde se usa | Para qué |
+|---|---|---|---|
+| **Logback + SLF4J** | 1.5.6 / 2.0.13 | `src/main/resources/logback.xml`; DAOs y `util/Conexion.java` | Registro de eventos con rotación diaria en `logs/elsol.log` |
+| **Apache Commons Lang** | 3.14.0 | `controller/ProductoController.java`, `controller/UsuarioController.java` | Validación de textos con `StringUtils.isBlank()` |
+| **Google Guava** | 33.2.1-jre | `modeloDAO/VentaDAO.java` | Precondiciones (`Preconditions`) para fallo rápido |
+| **Apache POI** | 5.2.5 | `web/ExportarExcelServlet.java` (`/reportes/excel`) | Exportar el reporte de ventas a Excel `.xlsx` |
+| **OpenPDF** | 1.3.30 | `web/ComprobanteServlet.java` | Generar el comprobante de venta en PDF |
+| **MySQL Connector/J** | 8.4.0 | `util/Conexion.java` | Conexión con MySQL 8 |
+
+**Seguridad:** versiones fijas para evitar dependencias transitivas vulnerables, logs sin contraseñas ni datos sensibles, exportación restringida al perfil ADMIN (`AuthFilter`) y consultas con `PreparedStatement` en toda la capa DAO.
