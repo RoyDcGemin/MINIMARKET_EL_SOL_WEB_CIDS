@@ -1,7 +1,11 @@
 package modeloDAO;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import dto.DetalleVentaDTO;
 import dto.VentaDTO;
+import com.google.common.base.Preconditions;
 import interfaces.VentaInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Venta;
 import util.Conexion;
 
@@ -41,7 +43,7 @@ public class VentaDAO implements VentaInterface {
             parametrosVenta(ps, v);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -56,7 +58,7 @@ public class VentaDAO implements VentaInterface {
             ps.setInt(11, v.getIdVenta());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -82,7 +84,7 @@ public class VentaDAO implements VentaInterface {
             ps.setInt(1, idVenta);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -97,7 +99,7 @@ public class VentaDAO implements VentaInterface {
                 lista.add(mapear(rs));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -115,7 +117,7 @@ public class VentaDAO implements VentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return v; // null si no existe.
     }
@@ -149,7 +151,7 @@ public class VentaDAO implements VentaInterface {
             ps.setInt(1, idVenta);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -171,7 +173,7 @@ public class VentaDAO implements VentaInterface {
                 lista.add(new String[]{rs.getString("dni_cliente"), rs.getString("nombre_cliente")});
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -188,6 +190,10 @@ public class VentaDAO implements VentaInterface {
      */
     @Override
     public int guardarVentaCompleta(VentaDTO ventaDTO) {
+        // Google Guava: precondiciones de entrada (fallo rapido si el DTO viene incompleto).
+        Preconditions.checkNotNull(ventaDTO, "La venta no puede ser nula");
+        Preconditions.checkArgument(ventaDTO.getDetalles() != null && !ventaDTO.getDetalles().isEmpty(),
+                "La venta debe tener al menos un detalle");
         int idGenerado = -1;
         String sqlVenta = "INSERT INTO venta (fecha, hora_inicio, hora_fin, total, descuento, "
                 + "estado, dni_cliente, nombre_cliente, metodo_pago, id_usuario) "
@@ -260,12 +266,12 @@ public class VentaDAO implements VentaInterface {
             } catch (SQLException ex) {
                 // 5) Algo fallo -> revertimos (rollback) y avisamos.
                 conn.rollback();
-                Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, "Venta NO guardada (rollback)", ex);
+                LoggerFactory.getLogger(VentaDAO.class).error("Venta NO guardada (rollback)", ex);
                 idGenerado = -1;
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
             idGenerado = -1;
         }
         return idGenerado;
@@ -291,7 +297,7 @@ public class VentaDAO implements VentaInterface {
                 lista.add(hidratar(rs, usuarioDAO, detalleDAO));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -336,7 +342,7 @@ public class VentaDAO implements VentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -384,7 +390,7 @@ public class VentaDAO implements VentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return r;
     }
@@ -418,7 +424,7 @@ public class VentaDAO implements VentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return r;
     }
@@ -439,7 +445,7 @@ public class VentaDAO implements VentaInterface {
                 siguienteID = rs.getInt("maxID") + 1;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(VentaDAO.class).error("Error de base de datos", ex);
         }
         return siguienteID;
     }

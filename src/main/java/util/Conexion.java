@@ -1,11 +1,11 @@
 package util;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Clase encargada de entregar conexiones a la base de datos MySQL.
  *
@@ -41,7 +41,7 @@ public class Conexion {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USUARIO, CLAVE);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Conexion.class).error("Error de base de datos", ex);
         }
         return null;
     }

@@ -65,7 +65,8 @@ public class AuthFilter implements Filter {
     /** Indica si la ruta es de administracion (solo ADMIN). */
     private boolean esRutaAdmin(String contexto, String ruta) {
         for (String r : RUTAS_ADMIN) {
-            if (ruta.equals(contexto + r)) {
+            // startsWith para cubrir tambien subrutas como /reportes/excel
+            if (ruta.startsWith(contexto + r)) {
                 return true;
             }
         }

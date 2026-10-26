@@ -1,5 +1,8 @@
 package modeloDAO;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import dto.DetalleVentaDTO;
 import interfaces.DetalleVentaInterface;
 import java.sql.Connection;
@@ -7,8 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.DetalleVenta;
 import modelo.Producto;
 import util.Conexion;
@@ -37,7 +38,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
             ps.setDouble(5, detalle.getSubtotal());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -53,7 +54,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
             ps.setInt(5, detalle.getIdDetalle());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -65,7 +66,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -87,7 +88,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
                 lista.add(d);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -111,7 +112,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
         return d; // null si no existe.
     }
@@ -145,7 +146,7 @@ public class DetalleVentaDAO implements DetalleVentaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DetalleVentaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DetalleVentaDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }

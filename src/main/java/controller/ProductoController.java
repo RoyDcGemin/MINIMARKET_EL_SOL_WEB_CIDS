@@ -4,6 +4,7 @@ import dto.ProductoDTO;
 import java.util.ArrayList;
 import modelo.Producto;
 import modeloDAO.ProductoDAO;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Controlador de la entidad Producto.
@@ -136,14 +137,15 @@ public class ProductoController {
      * Se aplica en el servidor antes de llegar a la base de datos.
      */
     private void validar(String codigo, String nombre, double precio, double costo, int stock, int stockMinimo, int idCategoria, int idProducto) throws ValidacionException {
-        if (codigo == null || codigo.trim().isEmpty()) {
+        // Apache Commons Lang: StringUtils.isBlank simplifica la validacion de texto.
+        if (StringUtils.isBlank(codigo)) {
             throw new ValidacionException("Ingrese el codigo del producto");
         }
         Producto otro = productoDAO.buscarPorCodigo(codigo.trim());
         if (otro != null && otro.getIdProducto() != idProducto) {
             throw new ValidacionException("El codigo ya existe en otro producto");
         }
-        if (nombre == null || nombre.trim().isEmpty()) {
+        if (StringUtils.isBlank(nombre)) {
             throw new ValidacionException("Ingrese el nombre del producto");
         }
         if (precio <= 0) {

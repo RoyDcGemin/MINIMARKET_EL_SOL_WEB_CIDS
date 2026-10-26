@@ -27,6 +27,40 @@
     </properties>
 
     <dependencies>
+        <!-- ================= LIBRERIAS DE APOYO (rubrica APF3) ============= -->
+        <!-- Logback + SLF4J: registro de eventos (reemplaza java.util.logging). -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.6</version>
+        </dependency>
+
+        <!-- Apache Commons Lang: utilidades de texto (StringUtils.isBlank, etc.). -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.14.0</version>
+        </dependency>
+
+        <!-- Google Guava: validacion de precondiciones (fallo rapido). -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.2.1-jre</version>
+        </dependency>
+
+        <!-- Apache POI: exportacion de reportes a Excel (.xlsx). -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+
         <!-- Jakarta Servlet API: la proporciona Tomcat 10.1 (scope provided). -->
         <dependency>
             <groupId>jakarta.servlet</groupId>

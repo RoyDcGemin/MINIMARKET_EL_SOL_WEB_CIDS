@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configuracion de Logback (registro de eventos del sistema).
+  - Consola: nivel INFO (lo que ve el cajero/administrador en el servidor).
+  - Archivo: logs/elsol.log con rotacion diaria (nivel INFO).
+  - Paquetes del proyecto en DEBUG para ver el detalle de las operaciones.
+-->
+<configuration>
+
+    <property name="PATRON" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="CONSOLA" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATRON}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ARCHIVO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/elsol.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/elsol.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATRON}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="modeloDAO" level="DEBUG"/>
+    <logger name="controller" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLA"/>
+        <appender-ref ref="ARCHIVO"/>
+    </root>
+
+</configuration>

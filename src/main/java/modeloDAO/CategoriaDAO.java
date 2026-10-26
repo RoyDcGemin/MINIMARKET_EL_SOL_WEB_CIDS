@@ -1,13 +1,14 @@
 package modeloDAO;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import interfaces.CategoriaInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Categoria;
 import util.Conexion;
 
@@ -31,7 +32,7 @@ public class CategoriaDAO implements CategoriaInterface {
             ps.setString(1, c.getDescripcion());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -44,7 +45,7 @@ public class CategoriaDAO implements CategoriaInterface {
             ps.setInt(2, c.getIdCategoria());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -56,7 +57,7 @@ public class CategoriaDAO implements CategoriaInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -76,7 +77,7 @@ public class CategoriaDAO implements CategoriaInterface {
                 vc.add(c);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
         // Devolvemos la lista de objetos (datos listos para la capa superior).
         return vc;
@@ -97,7 +98,7 @@ public class CategoriaDAO implements CategoriaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
         return c; // null si no existe.
     }
@@ -117,7 +118,7 @@ public class CategoriaDAO implements CategoriaInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CategoriaDAO.class).error("Error de base de datos", ex);
         }
         return 0;
     }

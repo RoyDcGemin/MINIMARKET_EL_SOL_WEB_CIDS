@@ -133,6 +133,11 @@
             </div>
             <div class="grupo-botones">
                 <button type="submit" class="btn btn-primario">Filtrar</button>
+                <!-- Apache POI: descarga el mismo reporte en Excel (.xlsx) -->
+                <a class="btn btn-secundario"
+                   href="${pageContext.request.contextPath}/reportes/excel?desde=${desde}&amp;hasta=${hasta}">
+                    Exportar a Excel (POI)
+                </a>
             </div>
         </form>
 

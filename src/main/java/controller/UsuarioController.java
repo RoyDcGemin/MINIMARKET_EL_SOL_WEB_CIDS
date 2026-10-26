@@ -3,6 +3,7 @@ package controller;
 import java.util.ArrayList;
 import modelo.Usuario;
 import modeloDAO.UsuarioDAO;
+import org.apache.commons.lang3.StringUtils;
 import util.HashUtil;
 
 /**
@@ -32,8 +33,8 @@ public class UsuarioController {
      *         (campos vacios, usuario inexistente o contrasenia incorrecta)
      */
     public Usuario iniciarSesion(String nombre, String clave) throws ValidacionException {
-        // 1) Validacion de campos vacios.
-        if (nombre.isEmpty() || clave.isEmpty()) {
+        // 1) Validacion de campos vacios (Apache Commons Lang: StringUtils).
+        if (StringUtils.isBlank(nombre) || StringUtils.isBlank(clave)) {
             throw new ValidacionException("Ingresar usuario y contraseña");
         }
 

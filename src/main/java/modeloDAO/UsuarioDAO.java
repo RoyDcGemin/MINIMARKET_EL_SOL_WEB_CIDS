@@ -1,13 +1,14 @@
 package modeloDAO;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import interfaces.UsuarioInterface;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Usuario;
 import util.Conexion;
 import util.HashUtil;
@@ -35,7 +36,7 @@ public class UsuarioDAO implements UsuarioInterface {
             ps.setString(4, u.getRol());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -51,7 +52,7 @@ public class UsuarioDAO implements UsuarioInterface {
             ps.setInt(5, u.getIdusuario());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -63,7 +64,7 @@ public class UsuarioDAO implements UsuarioInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -84,7 +85,7 @@ public class UsuarioDAO implements UsuarioInterface {
                 vu.add(u);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
         return vu;
     }
@@ -107,7 +108,7 @@ public class UsuarioDAO implements UsuarioInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
         return u; // null si no existe.
     }
@@ -131,7 +132,7 @@ public class UsuarioDAO implements UsuarioInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsuarioDAO.class).error("Error de base de datos", ex);
         }
         return u; // null si el usuario no existe en la BD.
     }

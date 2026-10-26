@@ -1,5 +1,8 @@
 package modeloDAO;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import dto.ProductoDTO;
 import interfaces.ProductoInterface;
 import java.sql.Connection;
@@ -7,8 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Categoria;
 import modelo.Producto;
 import util.Conexion;
@@ -44,7 +45,7 @@ public class ProductoDAO implements ProductoInterface {
             ps.setInt(8, p.getIdCategoria());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -64,7 +65,7 @@ public class ProductoDAO implements ProductoInterface {
             ps.setInt(9, p.getIdProducto());
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -80,7 +81,7 @@ public class ProductoDAO implements ProductoInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -96,7 +97,7 @@ public class ProductoDAO implements ProductoInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -109,7 +110,7 @@ public class ProductoDAO implements ProductoInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
     }
 
@@ -125,7 +126,7 @@ public class ProductoDAO implements ProductoInterface {
                 lista.add(mapear(rs));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -142,7 +143,7 @@ public class ProductoDAO implements ProductoInterface {
                 lista.add(mapear(rs));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -160,7 +161,7 @@ public class ProductoDAO implements ProductoInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return p; // null si no existe.
     }
@@ -216,7 +217,7 @@ public class ProductoDAO implements ProductoInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return p; // null si no existe.
     }
@@ -239,7 +240,7 @@ public class ProductoDAO implements ProductoInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
@@ -274,7 +275,7 @@ public class ProductoDAO implements ProductoInterface {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return 0;
     }
@@ -332,7 +333,7 @@ public class ProductoDAO implements ProductoInterface {
                 lista.add(dto);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ProductoDAO.class).error("Error de base de datos", ex);
         }
         return lista;
     }
