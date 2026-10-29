@@ -22,7 +22,7 @@ import modeloDAO.VentaDAO;
  * FLUJO (reportes):
  *   Vista (reportes.jsp) -> VentaController.listarConFiltros
  *     -> VentaDAO.listarConFiltros -> Base de datos
- *     -> devuelve List<VentaDTO> ya completas.
+ *     -> devuelve {@code List<VentaDTO>} ya completas.
  */
 public class VentaController {
 

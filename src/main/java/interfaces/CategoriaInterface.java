@@ -4,7 +4,7 @@ import modelo.Categoria;
 
 /**
  * Interfaz de Categoria.
- * No agrega metodos propios: solo especializa CRUD<Categoria>,
+ * No agrega metodos propios: solo especializa {@code CRUD<Categoria>},
  * es decir, "las categorias se manejan con CRUD normal".
  * CategoriaDAO la implementa.
  */

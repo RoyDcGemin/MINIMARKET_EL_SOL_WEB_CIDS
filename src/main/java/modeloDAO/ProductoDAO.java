@@ -26,7 +26,8 @@ import util.Conexion;
  *   digitado en caja (emulacion del scanner, sin hardware).
  * - buscarPorTexto(texto), busqueda por descripcion o nombre comercial
  *   (consulta SQL de UNA tabla: solo producto).
- * - listarStockBajo(), productos con stock <= stock_minimo.
+ * - listarStockBajo(), productos cuyo stock llego al umbral (stock no
+ *   mayor que stock_minimo).
  */
 public class ProductoDAO implements ProductoInterface {
 
@@ -246,7 +247,8 @@ public class ProductoDAO implements ProductoInterface {
     }
 
     /**
-     * Productos con stock en nivel critico (stock <= stock_minimo).
+     * Productos con stock en nivel critico (stock cercano o por debajo
+     * del stock minimo definido para el producto).
      * Sostiene el panel "Stock bajo" del Minimarket.
      */
     public ArrayList<ProductoDTO> listarStockBajo() {

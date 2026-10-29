@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Interfaz de Venta.
- * Ademas del CRUD<Venta> normal, agrega:
+ * Ademas del {@code CRUD<Venta>} normal, agrega:
  *  - guardarVentaCompleta(...): guarda venta + detalles + descuenta
  *    stock TODO en una transaccion (todo o nada).
  *  - listarVentasConDetalles(): lista ventas con sus detalles y

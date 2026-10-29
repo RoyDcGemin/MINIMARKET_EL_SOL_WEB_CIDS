@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Interfaz de DetalleVenta.
- * Ademas del CRUD<DetalleVenta> normal, agrega:
+ * Ademas del {@code CRUD<DetalleVenta>} normal, agrega:
  * listarPorVenta(idVenta): devuelve los detalles de una
  * venta con el nombre del producto (DetalleVentaDTO).
  * DetalleVentaDAO la implementa.

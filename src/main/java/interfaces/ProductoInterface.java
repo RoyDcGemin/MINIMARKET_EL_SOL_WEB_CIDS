@@ -6,7 +6,7 @@ import modelo.Producto;
 
 /**
  * Interfaz de Producto.
- * Ademas del CRUD<Producto> normal, agrega un metodo propio:
+ * Ademas del {@code CRUD<Producto>} normal, agrega un metodo propio:
  * listarProductoDTO() devuelve productos "enriquecidos" con el nombre
  * de su categoria (ProductoDTO = Producto + Categoria).
  * ProductoDAO la implementa.

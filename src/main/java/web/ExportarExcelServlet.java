@@ -21,7 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Exporta el REPORTE DE VENTAS a Excel (.xlsx) usando Apache POI.
  *
- * Ruta: /reportes/excel?desde=aaaa-mm-dd&hasta=aaaa-mm-dd
+ * Ruta: {@code /reportes/excel?desde=aaaa-mm-dd&hasta=aaaa-mm-dd}
  *
  * Es una de las librerias de apoyo del proyecto: Apache POI permite
  * generar el archivo Excel desde Java sin herramientas externas.

@@ -33,10 +33,10 @@ import modelo.Usuario;
  * FLUJO:
  *  1. GET  /venta              -> muestra el formulario + el carrito.
  *  2. POST accion=agregar      -> busca por codigo, valida stock y agrega.
- *  3. GET  ?accion=quitar&i=n  -> quita un detalle del carrito.
+ *  3. GET  {@code ?accion=quitar&i=n}  -> quita un detalle del carrito.
  *  4. GET  ?accion=limpiar     -> vacia el carrito (y reinicia la hora).
  *  5. POST accion=vender       -> guarda TODO en la BD (transaccion).
- *  6. GET  ?accion=confirmada&id=N -> muestra el comprobante HTML.
+ *  6. GET  {@code ?accion=confirmada&id=N} -> muestra el comprobante HTML.
  *
  * El total SIEMPRE se recalcula del lado del servidor (nunca se confia en
  * el texto de un campo de la pagina).
