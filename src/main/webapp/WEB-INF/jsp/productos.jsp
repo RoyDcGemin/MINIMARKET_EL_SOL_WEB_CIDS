@@ -77,7 +77,7 @@
                                     <c:when test="${esAdmin}">
                                         <div class="grupo-botones">
                                             <!-- Los datos viajan en atributos data-* escapados
-                                                 con <c:out>: el nombre nunca se interpola dentro
+                                                 con c:out: el nombre nunca se interpola dentro
                                                  de un onclick (evita romper el HTML con comillas). -->
                                             <button type="button" class="btn btn-secundario btn-pequeno btn-editar"
                                                     data-id="${p.idProducto}"

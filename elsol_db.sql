@@ -92,6 +92,49 @@ CREATE TABLE IF NOT EXISTS detalle_venta (
 ) ENGINE=InnoDB;
 
 -- =====================================================================
+-- MIGRACION para bases de datos creadas con la version anterior (botica):
+--  1) renombra la columna principio_activo -> descripcion
+--  2) agrega las columnas costo/activo solo si no existen
+-- MySQL no soporta ADD COLUMN IF NOT EXISTS, por eso se usa un procedimiento.
+-- DEBE ejecutarse ANTES de insertar los datos, porque en una base vieja
+-- la tabla producto aun no tiene la columna "descripcion".
+-- =====================================================================
+DROP PROCEDURE IF EXISTS migrar_columnas;
+DELIMITER //
+CREATE PROCEDURE migrar_columnas()
+BEGIN
+  -- principio_activo -> descripcion (solo si la version vieja existe)
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'principio_activo')
+     AND NOT EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'descripcion') THEN
+    ALTER TABLE producto CHANGE COLUMN principio_activo descripcion VARCHAR(100) NOT NULL DEFAULT '';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'costo') THEN
+    ALTER TABLE producto ADD COLUMN costo DECIMAL(10,2) NOT NULL DEFAULT 0;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'activo') THEN
+    ALTER TABLE producto ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'elsol_db' AND table_name = 'categoria' AND column_name = 'activo') THEN
+    ALTER TABLE categoria ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+  END IF;
+END //
+DELIMITER ;
+CALL migrar_columnas();
+DROP PROCEDURE migrar_columnas;
+
+-- Nota: si la base venia de la VERSION BOTICA, conviene limpiar los datos
+-- viejos antes de demostrar (descomente segun el caso):
+--   DELETE FROM producto WHERE codigo LIKE 'F0%';
+--   DELETE FROM categoria WHERE descripcion IN ('Analgesicos','Antibioticos',
+--     'Antiinflamatorios','Antihistaminicos','Vitaminas y suplementos');
+-- (requiere que no existan ventas que referencien a esos productos).
+
+-- =====================================================================
 -- Datos iniciales
 -- =====================================================================
 -- Usuarios de prueba (los 2 PERFILES pedidos en la indicacion).
@@ -102,14 +145,11 @@ CREATE TABLE IF NOT EXISTS detalle_venta (
 --   Cajero2026! -> SHA-256 de la clave del CAJERO
 -- La clave NUNCA se guarda en texto plano (ver util.HashUtil).
 --
--- ADMIN   -> Admin#2026
--- CAJERO  -> Cajero2026!
+-- ADMIN   -> Admin#2026   (hash b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3)
+-- CAJERO  -> Cajero2026!  (hash 5cb3b5fd026da381d44a175815afdec4a13f6962d6c982cb61613b331ca9f943)
 INSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'admin', 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3', 'Administrador El Sol', 'ADMIN'
-WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'admin');
-INSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'cajero', '43b65a2b4d8028ea8efecd9ff82e7c3e86c645fccfdecd0ddad29945e992c192', 'Personal El Sol', 'CAJERO'
-WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'cajero');
+SELECT 'admin', 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3', 'Administrador El Sol', 'ADMIN'\nWHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'admin');\nINSERT INTO usuario (usuario, clave, nombre, rol)
+SELECT 'cajero', '5cb3b5fd026da381d44a175815afdec4a13f6962d6c982cb61613b331ca9f943', 'Personal El Sol', 'CAJERO'\nWHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'cajero');
 
 -- MIGRACION: si la base existia con las claves de prueba viejas ('1234',
 -- hash 03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4),
@@ -176,47 +216,6 @@ AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'C001');
 -- Se usa para calcular la UTILIDAD en el reporte ingresos/utilidad/stock.
 -- =====================================================================
 UPDATE producto SET costo = ROUND(precio * 0.80, 2);
-
--- =====================================================================
--- MIGRACION para bases de datos creadas con la version anterior (botica):
---  1) renombra la columna principio_activo -> descripcion
---  2) agrega las columnas costo/activo solo si no existen
--- MySQL no soporta ADD COLUMN IF NOT EXISTS, por eso se usa un procedimiento.
--- =====================================================================
-DROP PROCEDURE IF EXISTS migrar_columnas;
-DELIMITER //
-CREATE PROCEDURE migrar_columnas()
-BEGIN
-  -- principo_activo -> descripcion (solo si la version vieja existe)
-  IF EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'principio_activo')
-     AND NOT EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'descripcion') THEN
-    ALTER TABLE producto CHANGE COLUMN principio_activo descripcion VARCHAR(100) NOT NULL DEFAULT '';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                 WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'costo') THEN
-    ALTER TABLE producto ADD COLUMN costo DECIMAL(10,2) NOT NULL DEFAULT 0;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                 WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'activo') THEN
-    ALTER TABLE producto ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                 WHERE table_schema = 'elsol_db' AND table_name = 'categoria' AND column_name = 'activo') THEN
-    ALTER TABLE categoria ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
-  END IF;
-END //
-DELIMITER ;
-CALL migrar_columnas();
-DROP PROCEDURE migrar_columnas;
-
--- Nota: si la base venia de la VERSION BOTICA, conviene limpiar los datos
--- viejos antes de demostrar (descomente segun el caso):
---   DELETE FROM producto WHERE codigo LIKE 'F0%';
---   DELETE FROM categoria WHERE descripcion IN ('Analgesicos','Antibioticos',
---     'Antiinflamatorios','Antihistaminicos','Vitaminas y suplementos');
--- (requiere que no existan ventas que referencien a esos productos).
 
 -- =====================================================================
 -- USUARIO DE LA APLICACION (util.Conexion usa elsol / elsol123).
