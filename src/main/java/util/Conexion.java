@@ -1,8 +1,6 @@
 package util;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -34,15 +32,16 @@ public class Conexion {
     /**
      * Devuelve una conexion nueva a la base de datos.
      *
-     * @return Connection lista para usarse, o null si no se pudo conectar.
+     * @return Connection lista para usarse
+     * @throws SQLException si no hay driver o no se pudo conectar; los DAO
+     *         ya capturan esta excepcion, que ademas queda en el log
      */
-    public static Connection getConexion() {
+    public static Connection getConexion() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USUARIO, CLAVE);
-        } catch (ClassNotFoundException | SQLException ex) {
-            LoggerFactory.getLogger(Conexion.class).error("Error de base de datos", ex);
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException("No se encontro el driver de MySQL", ex);
         }
-        return null;
     }
 }
