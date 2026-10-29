@@ -2,7 +2,14 @@
 -- MINIMARKET "EL SOL" - Script de creacion de base de datos
 -- Curso Integrador I - Desarrollo de Software
 -- Motor: MySQL 8 | Base: elsol_db | Charset: utf8mb4
--- Uso: mysql -u root -p < elsol_db.sql
+--
+-- IMPORTANTE: este script debe ejecutarse como ROOT porque crea la base
+-- de datos y el usuario de la aplicacion:
+--   mysql -u root -p < elsol_db.sql
+--
+-- Para partir de un ambiente limpio (recomendado para la demo):
+--   mysql -u root -p  ->  DROP DATABASE IF EXISTS elsol_db;
+--   y luego ejecutar este script.
 -- =====================================================================
 CREATE DATABASE IF NOT EXISTS elsol_db
   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
@@ -11,13 +18,14 @@ USE elsol_db;
 -- ---------------------------------------------------------------------
 -- Tabla: usuario (accesos al sistema, clave en SHA-256, nunca texto plano)
 -- Los 2 PERFILES del sistema se guardan en la columna "rol": ADMIN / CAJERO
+-- El CHECK impide guardar un rol distinto de los dos perfiles existentes.
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS usuario (
   id_usuario INT AUTO_INCREMENT PRIMARY KEY,
   usuario VARCHAR(50) NOT NULL UNIQUE,
   clave VARCHAR(64) NOT NULL,
   nombre VARCHAR(100),
-  rol VARCHAR(20)
+  rol VARCHAR(20) NOT NULL DEFAULT 'CAJERO' CHECK (rol IN ('ADMIN','CAJERO'))
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -41,7 +49,7 @@ CREATE TABLE IF NOT EXISTS producto (
   id_producto INT AUTO_INCREMENT PRIMARY KEY,
   codigo VARCHAR(30) NOT NULL UNIQUE,
   nombre VARCHAR(100) NOT NULL,
-  principio_activo VARCHAR(100) NOT NULL DEFAULT '',
+  descripcion VARCHAR(100) NOT NULL DEFAULT '',
   precio DECIMAL(10,2) NOT NULL,
   costo DECIMAL(10,2) NOT NULL DEFAULT 0,
   stock INT NOT NULL,
@@ -86,66 +94,82 @@ CREATE TABLE IF NOT EXISTS detalle_venta (
 -- =====================================================================
 -- Datos iniciales
 -- =====================================================================
--- Usuarios (clave "1234" en SHA-256):
--- 03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4
+-- Usuarios de prueba (los 2 PERFILES pedidos en la indicacion).
+--
+-- POLITICA DE CONTRASENA: minimo 8 caracteres, con al menos una letra
+-- minuscula, una mayuscula, un numero y un simbolo especial.
+--   Admin#2026  -> SHA-256 de la clave del ADMIN
+--   Cajero2026! -> SHA-256 de la clave del CAJERO
+-- La clave NUNCA se guarda en texto plano (ver util.HashUtil).
+--
+-- ADMIN   -> Admin#2026
+-- CAJERO  -> Cajero2026!
 INSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'admin', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Administrador El Sol', 'ADMIN'
+SELECT 'admin', 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3', 'Administrador El Sol', 'ADMIN'
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'admin');
 INSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'cajero', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Personal El Sol', 'CAJERO'
+SELECT 'cajero', '43b65a2b4d8028ea8efecd9ff82e7c3e86c645fccfdecd0ddad29945e992c192', 'Personal El Sol', 'CAJERO'
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'cajero');
 
--- Categorias farmaceuticas
+-- MIGRACION: si la base existia con las claves de prueba viejas ('1234',
+-- hash 03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4),
+-- se migran a las nuevas claves que cumplen la politica.
+UPDATE usuario SET clave = 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3'
+WHERE usuario = 'admin' AND clave = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+UPDATE usuario SET clave = '43b65a2b4d8028ea8efecd9ff82e7c3e86c645fccfdecd0ddad29945e992c192'
+WHERE usuario = 'cajero' AND clave = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+
+-- Categorias del minimarket
 INSERT INTO categoria (descripcion)
-SELECT 'Analgesicos' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Analgesicos');
+SELECT 'Abarrotes' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Abarrotes');
 INSERT INTO categoria (descripcion)
-SELECT 'Antibioticos' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Antibioticos');
+SELECT 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Bebidas');
 INSERT INTO categoria (descripcion)
-SELECT 'Antiinflamatorios' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Antiinflamatorios');
+SELECT 'Limpieza' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Limpieza');
 INSERT INTO categoria (descripcion)
-SELECT 'Antihistaminicos' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Antihistaminicos');
+SELECT 'Snacks' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Snacks');
 INSERT INTO categoria (descripcion)
-SELECT 'Vitaminas y suplementos' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Vitaminas y suplementos');
+SELECT 'Lacteos y huevos' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Lacteos y huevos');
 INSERT INTO categoria (descripcion)
 SELECT 'Cuidado personal' WHERE NOT EXISTS (SELECT 1 FROM categoria WHERE descripcion = 'Cuidado personal');
 
--- Productos (codigo, nombre comercial, principio activo, precio, stock, minimo, categoria)
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F001', 'Panadol 500mg x20 tab', 'Paracetamol', 12.50, 80, 10, id_categoria FROM categoria WHERE descripcion = 'Analgesicos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F001');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F002', 'Apronax 550mg x10 tab', 'Naproxeno', 18.90, 50, 8, id_categoria FROM categoria WHERE descripcion = 'Antiinflamatorios'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F002');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F003', 'Ibuprofeno 400mg x10 tab', 'Ibuprofeno', 9.50, 60, 8, id_categoria FROM categoria WHERE descripcion = 'Antiinflamatorios'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F003');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F004', 'Amoxicilina 500mg x12 cap', 'Amoxicilina', 22.00, 40, 6, id_categoria FROM categoria WHERE descripcion = 'Antibioticos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F004');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F005', 'Azitromicina 500mg x3 tab', 'Azitromicina', 25.50, 30, 5, id_categoria FROM categoria WHERE descripcion = 'Antibioticos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F005');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F006', 'Cetirizina 10mg x10 tab', 'Cetirizina', 8.00, 70, 10, id_categoria FROM categoria WHERE descripcion = 'Antihistaminicos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F006');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F007', 'Loratadina 10mg x10 tab', 'Loratadina', 7.50, 65, 10, id_categoria FROM categoria WHERE descripcion = 'Antihistaminicos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F007');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F008', 'Omeprazol 20mg x14 cap', 'Omeprazol', 11.00, 55, 8, id_categoria FROM categoria WHERE descripcion = 'Analgesicos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F008');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F009', 'Vitamina C 1g x10 eferv', 'Acido ascorbico', 15.00, 45, 6, id_categoria FROM categoria WHERE descripcion = 'Vitaminas y suplementos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F009');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F010', 'Alcohol 70% 1L', 'Alcohol etilico', 9.90, 100, 12, id_categoria FROM categoria WHERE descripcion = 'Cuidado personal'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F010');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F011', 'Mascarilla quirurgica x50', 'No aplica', 19.90, 120, 15, id_categoria FROM categoria WHERE descripcion = 'Cuidado personal'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F011');
-INSERT INTO producto (codigo, nombre, principio_activo, precio, stock, stock_minimo, id_categoria)
-SELECT 'F012', 'Paracetamol jarabe 120mg/5ml', 'Paracetamol', 13.50, 35, 5, id_categoria FROM categoria WHERE descripcion = 'Analgesicos'
-AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F012');
+-- Productos (codigo, nombre, descripcion/presentacion, precio, stock, minimo, categoria)
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'A001', 'Arroz extra 1 kg', 'Bolsa de 1 kg', 4.50, 80, 10, id_categoria FROM categoria WHERE descripcion = 'Abarrotes'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'A001');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'A002', 'Aceite vegetal 1 L', 'Botella de 1 L', 9.90, 50, 8, id_categoria FROM categoria WHERE descripcion = 'Abarrotes'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'A002');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'A003', 'Azucar rubia 1 kg', 'Bolsa de 1 kg', 3.80, 60, 10, id_categoria FROM categoria WHERE descripcion = 'Abarrotes'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'A003');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'A004', 'Fideos tallarin 500 g', 'Paquete de 500 g', 2.90, 70, 10, id_categoria FROM categoria WHERE descripcion = 'Abarrotes'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'A004');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'B001', 'Gaseosa cola 1.5 L', 'Botella de 1.5 L', 6.50, 90, 12, id_categoria FROM categoria WHERE descripcion = 'Bebidas'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'B001');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'B002', 'Agua mineral 625 ml', 'Botella de 625 ml', 1.50, 120, 20, id_categoria FROM categoria WHERE descripcion = 'Bebidas'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'B002');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'B003', 'Jugo de naranja 1 L', 'Caja de 1 L', 7.90, 40, 8, id_categoria FROM categoria WHERE descripcion = 'Bebidas'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'B003');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'L001', 'Detergente 800 g', 'Bolsa de 800 g', 8.50, 45, 8, id_categoria FROM categoria WHERE descripcion = 'Limpieza'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'L001');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'L002', 'Laina 1 L', 'Botella de 1 L', 3.20, 60, 10, id_categoria FROM categoria WHERE descripcion = 'Limpieza'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'L002');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'S001', 'Papas fritas 45 g', 'Bolsa de 45 g', 1.80, 100, 15, id_categoria FROM categoria WHERE descripcion = 'Snacks'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'S001');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'S002', 'Chocolate con leche 30 g', 'Tabla de 30 g', 2.50, 80, 12, id_categoria FROM categoria WHERE descripcion = 'Snacks'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'S002');
+INSERT INTO producto (codigo, nombre, descripcion, precio, stock, stock_minimo, id_categoria)
+SELECT 'C001', 'Leche evaporada 400 g', 'Lata de 400 g', 4.20, 55, 10, id_categoria FROM categoria WHERE descripcion = 'Lacteos y huevos'
+AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'C001');
 
 -- =====================================================================
 -- Costo de compra de los productos de ejemplo (80% del precio de venta).
@@ -154,14 +178,22 @@ AND NOT EXISTS (SELECT 1 FROM producto WHERE codigo = 'F012');
 UPDATE producto SET costo = ROUND(precio * 0.80, 2);
 
 -- =====================================================================
--- MIGRACION para bases de datos creadas con la version anterior.
--- Agrega las columnas costo y activo solo si no existen (MySQL no
--- soporta ADD COLUMN IF NOT EXISTS, por eso se usa un procedimiento).
+-- MIGRACION para bases de datos creadas con la version anterior (botica):
+--  1) renombra la columna principio_activo -> descripcion
+--  2) agrega las columnas costo/activo solo si no existen
+-- MySQL no soporta ADD COLUMN IF NOT EXISTS, por eso se usa un procedimiento.
 -- =====================================================================
 DROP PROCEDURE IF EXISTS migrar_columnas;
 DELIMITER //
 CREATE PROCEDURE migrar_columnas()
 BEGIN
+  -- principo_activo -> descripcion (solo si la version vieja existe)
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'principio_activo')
+     AND NOT EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'descripcion') THEN
+    ALTER TABLE producto CHANGE COLUMN principio_activo descripcion VARCHAR(100) NOT NULL DEFAULT '';
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns
                  WHERE table_schema = 'elsol_db' AND table_name = 'producto' AND column_name = 'costo') THEN
     ALTER TABLE producto ADD COLUMN costo DECIMAL(10,2) NOT NULL DEFAULT 0;
@@ -179,4 +211,17 @@ DELIMITER ;
 CALL migrar_columnas();
 DROP PROCEDURE migrar_columnas;
 
+-- Nota: si la base venia de la VERSION BOTICA, conviene limpiar los datos
+-- viejos antes de demostrar (descomente segun el caso):
+--   DELETE FROM producto WHERE codigo LIKE 'F0%';
+--   DELETE FROM categoria WHERE descripcion IN ('Analgesicos','Antibioticos',
+--     'Antiinflamatorios','Antihistaminicos','Vitaminas y suplementos');
+-- (requiere que no existan ventas que referencien a esos productos).
 
+-- =====================================================================
+-- USUARIO DE LA APLICACION (util.Conexion usa elsol / elsol123).
+-- Se crea aqui para que en una maquina limpia el WAR funcione tal cual.
+-- =====================================================================
+CREATE USER IF NOT EXISTS 'elsol'@'localhost' IDENTIFIED BY 'elsol123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON elsol_db.* TO 'elsol'@'localhost';
+FLUSH PRIVILEGES;
