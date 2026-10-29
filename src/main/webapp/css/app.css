@@ -557,3 +557,27 @@ img {
     background: #fef3c7;
     border: 1px solid #f59e0b;
 }
+
+/* ==== Buscador del catalogo de productos (consulta con filtro) ==== */
+.fila-acciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+}
+.campo-buscador {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-basis: auto;
+}
+.campo-buscador input {
+    width: 260px;
+    max-width: 60vw;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}

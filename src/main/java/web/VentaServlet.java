@@ -77,7 +77,7 @@ public class VentaServlet extends HttpServlet {
         }
 
         // Formulario normal. Pool filtrable por codigo, nombre comercial
-        // o principio activo (el cliente del minimarket suele pedir por generico).
+        // o descripcion (el cliente suele pedir por presentacion).
         String q = req.getParameter("q");
         q = (q == null) ? "" : q.trim();
         ArrayList<dto.ProductoDTO> productos = productoController.listarDTO();
@@ -87,7 +87,7 @@ public class VentaServlet extends HttpServlet {
             for (dto.ProductoDTO p : productos) {
                 String cod = p.getCodigo() == null ? "" : p.getCodigo().toLowerCase();
                 String nom = p.getNombre() == null ? "" : p.getNombre().toLowerCase();
-                String pa = p.getPrincipioActivo() == null ? "" : p.getPrincipioActivo().toLowerCase();
+                String pa = p.getDescripcion() == null ? "" : p.getDescripcion().toLowerCase();
                 if (cod.contains(ql) || nom.contains(ql) || pa.contains(ql)) {
                     filtrados.add(p);
                 }
@@ -136,9 +136,9 @@ public class VentaServlet extends HttpServlet {
 
         Producto producto = productoController.buscarPorCodigo(codigo);
         if (producto == null && !codigo.isEmpty()) {
-            // Fallback del minimarket: permite digitar el principio activo
-            // (ej. "paracetamol") en vez del codigo.
-            java.util.ArrayList<Producto> cands = productoController.buscarPorPrincipioActivo(codigo);
+            // Fallback del minimarket: permite digitar una descripcion o el
+            // nombre comercial (ej. "arroz") en vez del codigo exacto.
+            java.util.ArrayList<Producto> cands = productoController.buscarPorTexto(codigo);
             if (cands.size() == 1) {
                 producto = cands.get(0);
             } else if (cands.size() > 1) {

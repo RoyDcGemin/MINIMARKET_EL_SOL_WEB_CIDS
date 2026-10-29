@@ -31,16 +31,23 @@
         <p>Total del turno, transacciones y desglose por metodo de pago.</p>
     </a>
 
+    <a href="${pageContext.request.contextPath}/productos" class="tarjeta tarjeta-opcion">
+        <span class="icono-opcion">&#128722;</span>
+        <h2>Productos</h2>
+        <c:choose>
+            <c:when test="${sessionScope.usuario.rol == 'ADMIN'}">
+                <p>Administre el catalogo y el stock disponible.</p>
+            </c:when>
+            <c:otherwise>
+                <p>Consulte precios y stock del catalogo (solo lectura).</p>
+            </c:otherwise>
+        </c:choose>
+    </a>
     <c:if test="${sessionScope.usuario.rol == 'ADMIN'}">
         <a href="${pageContext.request.contextPath}/reportes" class="tarjeta tarjeta-opcion">
             <span class="icono-opcion">&#128202;</span>
             <h2>Reportes</h2>
             <p>Ventas por fecha, cajero y producto, con indicadores.</p>
-        </a>
-        <a href="${pageContext.request.contextPath}/productos" class="tarjeta tarjeta-opcion">
-            <span class="icono-opcion">&#128722;</span>
-            <h2>Ver Productos</h2>
-            <p>Administre el catalogo y el stock disponible.</p>
         </a>
         <a href="${pageContext.request.contextPath}/categorias" class="tarjeta tarjeta-opcion">
             <span class="icono-opcion">&#128193;</span>

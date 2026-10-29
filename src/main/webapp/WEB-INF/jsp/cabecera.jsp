@@ -20,8 +20,8 @@
             <a href="${pageContext.request.contextPath}/menu" class="enlace-nav">Inicio</a>
             <a href="${pageContext.request.contextPath}/venta" class="enlace-nav">Venta</a>
             <a href="${pageContext.request.contextPath}/cierre" class="enlace-nav">Cierre</a>
+            <a href="${pageContext.request.contextPath}/productos" class="enlace-nav">Productos</a>
             <c:if test="${sessionScope.usuario.rol == 'ADMIN'}">
-                <a href="${pageContext.request.contextPath}/productos" class="enlace-nav">Productos</a>
                 <a href="${pageContext.request.contextPath}/categorias" class="enlace-nav">Categorias</a>
                 <a href="${pageContext.request.contextPath}/reportes" class="enlace-nav">Reportes</a>
             </c:if>

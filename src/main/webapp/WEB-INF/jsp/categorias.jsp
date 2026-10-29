@@ -27,12 +27,14 @@
                             <td><c:out value="${cat.descripcion}"/></td>
                             <td>
                                 <div class="grupo-botones">
-                                    <button type="button" class="btn btn-secundario btn-pequeno"
-                                            onclick="editarCategoria(${cat.idCategoria}, '${cat.descripcion}')">
+                                    <!-- Datos en data-* escapados (sin EL dentro de onclick) -->
+                                    <button type="button" class="btn btn-secundario btn-pequeno btn-editar-categoria"
+                                            data-id="${cat.idCategoria}"
+                                            data-descripcion="<c:out value='${cat.descripcion}'/>">
                                         Editar
                                     </button>
                                     <form action="${pageContext.request.contextPath}/categorias" method="post"
-                                          onsubmit="return confirmarEliminacion(this, 'Esta seguro de eliminar la categoria ${cat.descripcion}?')">
+                                          onsubmit="return confirmarEliminacion(this, '¿Eliminar esta categoria? (eliminacion logica)')">
                                         <input type="hidden" name="accion" value="eliminar">
                                         <input type="hidden" name="id" value="${cat.idCategoria}">
                                         <button type="submit" class="btn btn-peligro btn-pequeno">Eliminar</button>
@@ -60,7 +62,7 @@
             <div class="campo">
                 <label for="descripcion">Descripcion</label>
                 <input type="text" id="descripcion" name="descripcion" required
-                       placeholder="Ej.: Analgesicos, Antibioticos..." maxlength="60">
+                       placeholder="Ej.: Abarrotes, Bebidas..." maxlength="60">
             </div>
 
             <div class="grupo-botones">
@@ -72,6 +74,12 @@
 </section>
 
 <script>
+    document.querySelectorAll(".btn-editar-categoria").forEach(function (boton) {
+        boton.addEventListener("click", function () {
+            editarCategoria(boton.dataset.id, boton.dataset.descripcion);
+        });
+    });
+
     function editarCategoria(id, descripcion) {
         document.getElementById("accion").value = "modificar";
         document.getElementById("id").value = id;

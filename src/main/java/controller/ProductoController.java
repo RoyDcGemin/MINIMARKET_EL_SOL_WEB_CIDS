@@ -3,6 +3,7 @@ package controller;
 import dto.ProductoDTO;
 import java.util.ArrayList;
 import modelo.Producto;
+import modeloDAO.CategoriaDAO;
 import modeloDAO.ProductoDAO;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +19,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ProductoController {
 
+    /** Rango de valores aceptables (ver informe: validacion tipo/longitud/rango). */
+    private static final int CODIGO_MIN = 3, CODIGO_MAX = 30;
+    private static final int NOMBRE_MIN = 3, NOMBRE_MAX = 100;
+    private static final int DESCRIPCION_MAX = 100;
+    /** DECIMAL(10,2): maximo 99,999,999.99 */
+    private static final double MONTO_MAXIMO = 9999999.99;
+    private static final int STOCK_MAXIMO = 1000000;
+
     private final ProductoDAO productoDAO = new ProductoDAO();
+    private final CategoriaDAO categoriaDAO = new CategoriaDAO();
 
     public ArrayList<Producto> listar() {
         return productoDAO.listar();
@@ -39,8 +49,9 @@ public class ProductoController {
         return productoDAO.buscarPorCodigo(codigo.trim());
     }
 
-    public ArrayList<Producto> buscarPorPrincipioActivo(String texto) {
-        return productoDAO.buscarPorPrincipioActivo(texto);
+    /** Busqueda por texto (descripcion o nombre). Consulta de UNA tabla. */
+    public ArrayList<Producto> buscarPorTexto(String texto) {
+        return productoDAO.buscarPorTexto(texto);
     }
 
     public ArrayList<ProductoDTO> listarStockBajo() {
@@ -48,24 +59,25 @@ public class ProductoController {
     }
 
     /**
-     * Agrega un producto farmaceutico nuevo.
+     * Agrega un producto nuevo del minimarket.
      *
      * @param codigo codigo digitado en caja (unico, emula el scanner)
      * @param nombre nombre comercial del producto
-     * @param principioActivo nombre generico (ej. "Paracetamol")
+     * @param descripcion presentacion del producto (ej. "Bolsa de 1 kg")
      * @param precio precio unitario
+     * @param costo precio de compra
      * @param stock cantidad en inventario
      * @param stockMinimo umbral de alerta de reposicion
      * @param idCategoria id de la categoria elegida
      * @throws ValidacionException si algun dato no es valido
      */
-    public void agregar(String codigo, String nombre, String principioActivo, double precio, double costo, int stock, int stockMinimo, int idCategoria) throws ValidacionException {
-        validar(codigo, nombre, precio, costo, stock, stockMinimo, idCategoria, 0);
+    public void agregar(String codigo, String nombre, String descripcion, double precio, double costo, int stock, int stockMinimo, int idCategoria) throws ValidacionException {
+        validar(codigo, nombre, descripcion, precio, costo, stock, stockMinimo, idCategoria, 0);
 
         Producto p = new Producto();
         p.setCodigo(codigo.trim());
         p.setNombre(nombre.trim());
-        p.setPrincipioActivo(principioActivo == null ? "" : principioActivo.trim());
+        p.setDescripcion(descripcion == null ? "" : descripcion.trim());
         p.setPrecio(precio);
         p.setCosto(costo);
         p.setStock(stock);
@@ -79,14 +91,14 @@ public class ProductoController {
      *
      * @param idProducto id del producto que se edita
      */
-    public void modificar(int idProducto, String codigo, String nombre, String principioActivo, double precio, double costo, int stock, int stockMinimo, int idCategoria) throws ValidacionException {
-        validar(codigo, nombre, precio, costo, stock, stockMinimo, idCategoria, idProducto);
+    public void modificar(int idProducto, String codigo, String nombre, String descripcion, double precio, double costo, int stock, int stockMinimo, int idCategoria) throws ValidacionException {
+        validar(codigo, nombre, descripcion, precio, costo, stock, stockMinimo, idCategoria, idProducto);
 
         Producto p = new Producto();
         p.setIdProducto(idProducto);
         p.setCodigo(codigo.trim());
         p.setNombre(nombre.trim());
-        p.setPrincipioActivo(principioActivo == null ? "" : principioActivo.trim());
+        p.setDescripcion(descripcion == null ? "" : descripcion.trim());
         p.setPrecio(precio);
         p.setCosto(costo);
         p.setStock(stock);
@@ -104,6 +116,9 @@ public class ProductoController {
      * @throws ValidacionException si el producto aparece en alguna venta
      */
     public void eliminar(int idProducto) throws ValidacionException {
+        if (idProducto <= 0) {
+            throw new ValidacionException("Seleccione un producto válido");
+        }
         if (productoDAO.usadoEnVentas(idProducto) > 0) {
             throw new ValidacionException(
                     "No se puede eliminar: el producto ya aparece en ventas. Use Desactivar.");
@@ -134,34 +149,80 @@ public class ProductoController {
 
     /**
      * Validacion centralizada de los campos del producto.
-     * Se aplica en el servidor antes de llegar a la base de datos.
+     * Se aplica en el servidor antes de llegar a la base de datos y cubre:
+     *   - TIPO: se exige texto/numero (el servlet no acepta letras en numericos).
+     *   - LONGITUD: limites coherentes con las columnas de la tabla.
+     *   - RANGO: valores minimos y maximos aceptables.
      */
-    private void validar(String codigo, String nombre, double precio, double costo, int stock, int stockMinimo, int idCategoria, int idProducto) throws ValidacionException {
+    private void validar(String codigo, String nombre, String descripcion,
+                         double precio, double costo, int stock, int stockMinimo,
+                         int idCategoria, int idProducto) throws ValidacionException {
+
         // Apache Commons Lang: StringUtils.isBlank simplifica la validacion de texto.
         if (StringUtils.isBlank(codigo)) {
             throw new ValidacionException("Ingrese el codigo del producto");
         }
-        Producto otro = productoDAO.buscarPorCodigo(codigo.trim());
+        codigo = codigo.trim();
+        if (codigo.length() < CODIGO_MIN || codigo.length() > CODIGO_MAX) {
+            throw new ValidacionException(
+                    "El codigo debe tener entre " + CODIGO_MIN + " y " + CODIGO_MAX + " caracteres");
+        }
+        if (!codigo.matches("[A-Za-z0-9._-]+")) {
+            throw new ValidacionException("El codigo solo puede tener letras, numeros, punto, guion o guion bajo");
+        }
+        Producto otro = productoDAO.buscarPorCodigo(codigo);
         if (otro != null && otro.getIdProducto() != idProducto) {
             throw new ValidacionException("El codigo ya existe en otro producto");
         }
+
         if (StringUtils.isBlank(nombre)) {
             throw new ValidacionException("Ingrese el nombre del producto");
         }
+        if (nombre.trim().length() < NOMBRE_MIN || nombre.trim().length() > NOMBRE_MAX) {
+            throw new ValidacionException(
+                    "El nombre debe tener entre " + NOMBRE_MIN + " y " + NOMBRE_MAX + " caracteres");
+        }
+
+        if (descripcion != null && descripcion.trim().length() > DESCRIPCION_MAX) {
+            throw new ValidacionException(
+                    "La descripcion no puede superar " + DESCRIPCION_MAX + " caracteres");
+        }
+
         if (precio <= 0) {
             throw new ValidacionException("El precio debe ser mayor a 0");
+        }
+        if (precio > MONTO_MAXIMO) {
+            throw new ValidacionException("El precio no puede superar S/. " + MONTO_MAXIMO);
         }
         if (costo < 0) {
             throw new ValidacionException("El costo no puede ser negativo");
         }
+        if (costo > MONTO_MAXIMO) {
+            throw new ValidacionException("El costo no puede superar S/. " + MONTO_MAXIMO);
+        }
+
         if (stock < 0) {
             throw new ValidacionException("El stock no puede ser negativo");
+        }
+        if (stock > STOCK_MAXIMO) {
+            throw new ValidacionException("El stock no puede superar " + STOCK_MAXIMO);
         }
         if (stockMinimo < 0) {
             throw new ValidacionException("El stock minimo no puede ser negativo");
         }
+        if (stockMinimo > STOCK_MAXIMO) {
+            throw new ValidacionException("El stock minimo no puede superar " + STOCK_MAXIMO);
+        }
+        // Stock minimo 0 no tiene sentido operativo: se pide al menos 1.
+        if (stockMinimo <= 0) {
+            throw new ValidacionException("El stock minimo debe ser al menos 1 (umbral de reposicion)");
+        }
+
         if (idCategoria <= 0) {
             throw new ValidacionException("Seleccione una categoría");
+        }
+        if (categoriaDAO.buscar(idCategoria) == null) {
+            throw new ValidacionException("La categoría seleccionada no existe");
         }
     }
 }

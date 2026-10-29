@@ -54,7 +54,7 @@
                     <tr>
                         <th>Codigo</th>
                         <th>Nombre comercial</th>
-                        <th>Principio activo</th>
+                        <th>Descripcion</th>
                         <th class="texto-derecha">Precio</th>
                         <th class="texto-derecha">Stock</th>
                     </tr>
@@ -64,7 +64,7 @@
                         <tr>
                             <td><strong><c:out value="${p.codigo}"/></strong></td>
                             <td><c:out value="${p.nombre}"/></td>
-                            <td><c:out value="${p.principioActivo}"/></td>
+                            <td><c:out value="${p.descripcion}"/></td>
                             <td class="texto-derecha monto">${sol:moneda(p.precio)}</td>
                             <td class="texto-derecha">
                                 ${p.stock}
