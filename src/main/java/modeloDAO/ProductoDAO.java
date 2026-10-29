@@ -24,20 +24,20 @@ import util.Conexion;
  *   usando un JOIN (patron DTO + SQL relacional).
  * - buscarPorCodigo(codigo), que localiza un producto por su codigo
  *   digitado en caja (emulacion del scanner, sin hardware).
- * - buscarPorPrincipioActivo(texto), busqueda por nombre generico
- *   (el cliente del minimarket suele pedir por principio activo).
+ * - buscarPorTexto(texto), busqueda por descripcion o nombre comercial
+ *   (consulta SQL de UNA tabla: solo producto).
  * - listarStockBajo(), productos con stock <= stock_minimo.
  */
 public class ProductoDAO implements ProductoInterface {
 
     @Override
     public void agregar(Producto p) {
-        String sql = "INSERT INTO producto (codigo, nombre, principio_activo, precio, costo, stock, stock_minimo, id_categoria, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        String sql = "INSERT INTO producto (codigo, nombre, descripcion, precio, costo, stock, stock_minimo, id_categoria, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
         try (Connection conn = Conexion.getConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getCodigo());
             ps.setString(2, p.getNombre());
-            ps.setString(3, p.getPrincipioActivo());
+            ps.setString(3, p.getDescripcion());
             ps.setDouble(4, p.getPrecio());
             ps.setDouble(5, p.getCosto());
             ps.setInt(6, p.getStock());
@@ -51,12 +51,12 @@ public class ProductoDAO implements ProductoInterface {
 
     @Override
     public void modificar(Producto p) {
-        String sql = "UPDATE producto SET codigo=?, nombre=?, principio_activo=?, precio=?, costo=?, stock=?, stock_minimo=?, id_categoria=? WHERE id_producto=?";
+        String sql = "UPDATE producto SET codigo=?, nombre=?, descripcion=?, precio=?, costo=?, stock=?, stock_minimo=?, id_categoria=? WHERE id_producto=?";
         try (Connection conn = Conexion.getConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getCodigo());
             ps.setString(2, p.getNombre());
-            ps.setString(3, p.getPrincipioActivo());
+            ps.setString(3, p.getDescripcion());
             ps.setDouble(4, p.getPrecio());
             ps.setDouble(5, p.getCosto());
             ps.setInt(6, p.getStock());
@@ -173,9 +173,9 @@ public class ProductoDAO implements ProductoInterface {
         p.setCodigo(rs.getString("codigo"));
         p.setNombre(rs.getString("nombre"));
         try {
-            p.setPrincipioActivo(rs.getString("principio_activo"));
+            p.setDescripcion(rs.getString("descripcion"));
         } catch (SQLException ex) {
-            p.setPrincipioActivo("");
+            p.setDescripcion("");
         }
         p.setPrecio(rs.getDouble("precio"));
         try {
@@ -223,12 +223,12 @@ public class ProductoDAO implements ProductoInterface {
     }
 
     /**
-     * Busca productos por principio activo o nombre comercial (LIKE).
-     * El cliente del minimarket suele pedir por principio activo y no por marca.
+     * Busca productos por descripcion o nombre comercial (LIKE).
+     * Consulta de UNA tabla: solo producto.
      */
-    public ArrayList<Producto> buscarPorPrincipioActivo(String texto) {
+    public ArrayList<Producto> buscarPorTexto(String texto) {
         ArrayList<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto WHERE principio_activo LIKE ? OR nombre LIKE ? LIMIT 20";
+        String sql = "SELECT * FROM producto WHERE descripcion LIKE ? OR nombre LIKE ? LIMIT 20";
         try (Connection conn = Conexion.getConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             String patron = "%" + (texto == null ? "" : texto.trim()) + "%";
@@ -285,7 +285,7 @@ public class ProductoDAO implements ProductoInterface {
         ArrayList<ProductoDTO> lista = new ArrayList<>();
 
         // CONSULTA DE DOS TABLAS (JOIN): producto + categoria en una sola consulta.
-        String sql = "SELECT p.id_producto, p.codigo, p.nombre, p.principio_activo, p.precio, p.costo, p.stock, p.stock_minimo, p.activo, "
+        String sql = "SELECT p.id_producto, p.codigo, p.nombre, p.descripcion, p.precio, p.costo, p.stock, p.stock_minimo, p.activo, "
                 + "c.id_categoria, c.descripcion AS nombreCategoria "
                 + "FROM producto p "
                 + "INNER JOIN categoria c ON p.id_categoria = c.id_categoria "
@@ -303,9 +303,9 @@ public class ProductoDAO implements ProductoInterface {
                 dto.setCodigo(rs.getString("codigo"));
                 dto.setNombre(rs.getString("nombre"));
                 try {
-                    dto.setPrincipioActivo(rs.getString("principio_activo"));
+                    dto.setDescripcion(rs.getString("descripcion"));
                 } catch (SQLException ex) {
-                    dto.setPrincipioActivo("");
+                    dto.setDescripcion("");
                 }
                 dto.setPrecio(rs.getDouble("precio"));
                 try {

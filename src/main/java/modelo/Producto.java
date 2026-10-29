@@ -11,6 +11,7 @@ package modelo;
  * - costo: precio de compra; sirve para calcular la utilidad en el
  *   reporte de ingresos/utilidad/stock.
  * - stock / stockMinimo: existencias y umbral de reposicion.
+ * - descripcion: presentacion del producto (bolsa 1 kg, botella 1.5 L...).
  * - activo: marca de ELIMINACION LOGICA. 1 = vigente, 0 = dado de baja.
  *   Cuando se "desactiva" un producto NO se borra la fila (UPDATE),
  *   de modo que las ventas historicas siguen siendo consistentes.
@@ -19,7 +20,7 @@ public class Producto {
     private int idProducto;
     private String codigo;
     private String nombre;
-    private String principioActivo;
+    private String descripcion;
     private double precio;
     private double costo;
     private int stock;
@@ -51,12 +52,12 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public String getPrincipioActivo() {
-        return principioActivo;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setPrincipioActivo(String principioActivo) {
-        this.principioActivo = principioActivo;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public double getPrecio() {

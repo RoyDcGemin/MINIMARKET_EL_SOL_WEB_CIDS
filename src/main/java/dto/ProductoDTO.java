@@ -7,13 +7,13 @@ import modelo.Categoria;
  * No representa una tabla: es la UNION de Producto + Categoria.
  * Se usa para mostrar en la tabla de productos el nombre de la
  * categoria junto al producto, sin escribir SQL en la vista.
- * Incluye principioActivo y stockMinimo para la vista de Bótica.
+ * Incluye descripcion y stockMinimo para la vista del Minimarket El Sol.
  */
 public class ProductoDTO {
     private int idProducto;
     private String codigo;
     private String nombre;
-    private String principioActivo;
+    private String descripcion;
     private double precio;
     private double costo;
     private int stock;
@@ -62,12 +62,12 @@ public class ProductoDTO {
         this.nombre = nombre;
     }
 
-    public String getPrincipioActivo() {
-        return principioActivo;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setPrincipioActivo(String principioActivo) {
-        this.principioActivo = principioActivo;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public double getPrecio() {
