@@ -19,15 +19,17 @@ import java.io.IOException;
  *
  * 2) AUTORIZACION POR ROL (2 perfiles):
  *    - ADMIN  : acceso total (venta, cierre, reportes, productos, categorias).
- *    - CAJERO : solo venta, comprobante, cierre de caja y su menu.
- *    Si un CAJERO intenta entrar a una ruta de administracion (/productos,
- *    /categorias, /reportes) se le redirige al menu con un mensaje.
+ *    - CAJERO : venta, comprobante, cierre de caja y CONSULTA del catalogo.
+ *    Si un CAJERO intenta entrar a una ruta de administracion (/categorias,
+ *    /reportes) se le redirige al menu con un mensaje.
+ *    (La modificacion del catalogo de productos se bloquea por ACCION en
+ *    ProductoServlet: la vista /productos es de lectura para el CAJERO.)
  */
 @WebFilter(urlPatterns = {"/*"})
 public class AuthFilter implements Filter {
 
     /** Rutas que solo puede usar el perfil ADMIN. */
-    private static final String[] RUTAS_ADMIN = {"/productos", "/categorias", "/reportes"};
+    private static final String[] RUTAS_ADMIN = {"/categorias", "/reportes"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -78,7 +80,8 @@ public class AuthFilter implements Filter {
         if (ruta.equals(contexto) || ruta.equals(contexto + "/")) {
             return true; // raiz: redirige via index.jsp
         }
-        if (ruta.equals(contexto + "/login") || ruta.equals(contexto + "/index.jsp")) {
+        if (ruta.equals(contexto + "/login") || ruta.equals(contexto + "/index.jsp")
+                || ruta.equals(contexto + "/registro")) {
             return true;
         }
         if (ruta.startsWith(contexto + "/css/")

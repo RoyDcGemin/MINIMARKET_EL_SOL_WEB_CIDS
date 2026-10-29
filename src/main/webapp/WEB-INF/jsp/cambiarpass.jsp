@@ -14,10 +14,14 @@
             <input type="password" id="claveActual" name="claveActual" required autocomplete="current-password">
         </div>
         <div class="campo">
+            <!-- POLITICA DE CONTRASENA: el servidor la repite (PasswordPolicy). -->
             <label for="claveNueva">Nueva contrasena</label>
             <input type="password" id="claveNueva" name="claveNueva" required autocomplete="new-password"
-                   aria-describedby="ayuda-clave-nueva">
-            <span class="ayuda-campo" id="ayuda-clave-nueva">Minimo 4 caracteres.</span>
+                   aria-describedby="ayuda-clave-nueva"
+                   minlength="8" maxlength="64"
+                   pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,64}"
+                   title="Minimo 8 caracteres, con minuscula, mayuscula, numero y simbolo especial">
+            <span class="ayuda-campo" id="ayuda-clave-nueva">Minimo 8 caracteres, con una minuscula, una mayuscula, un numero y un simbolo especial.</span>
         </div>
         <div class="campo">
             <label for="claveNueva2">Confirmar nueva contrasena</label>

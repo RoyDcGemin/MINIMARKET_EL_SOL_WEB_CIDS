@@ -40,7 +40,12 @@
         <button type="submit" class="btn btn-primario btn-ancho">Iniciar sesion</button>
     </form>
 
-    <p class="nota-login">Acceso de prueba: <strong>admin</strong> / <strong>1234</strong> · cajero <strong>cajero</strong> / <strong>1234</strong></p>
+    <!-- Opcion de REGISTRAR NUEVOS USUARIOS pedia en la indicacion. -->
+    <p class="nota-login">
+        No tiene cuenta? <a href="${pageContext.request.contextPath}/registro">Crear cuenta</a>
+    </p>
+
+    <p class="nota-login">Acceso de prueba: <strong>admin</strong> / <strong>Admin#2026</strong> · cajero <strong>cajero</strong> / <strong>Cajero2026!</strong></p>
 </main>
 
 <script src="${pageContext.request.contextPath}/js/app.js"></script>
