@@ -22,7 +22,7 @@
             <div class="campo">
                 <label for="codigo">Codigo del producto o descripcion</label>
                 <input type="text" id="codigo" name="codigo" required autofocus
-                       placeholder="Ej.: F001 o paracetamol" maxlength="100" autocomplete="off">
+                       placeholder="Ej.: A001 o Arroz" maxlength="100" autocomplete="off">
                 <span class="ayuda-campo" id="info-producto">Digite el codigo y pulse OK (emula el scanner). Tambien acepta la descripcion si es unica.</span>
             </div>
             <div class="campo">
@@ -41,7 +41,7 @@
             <div class="campo">
                 <label for="q">Buscar por codigo, nombre o descripcion</label>
                 <input type="text" id="q" name="q" value="<c:out value='${q}'/>"
-                       placeholder="Ej.: F001, paracetamol, Panadol" maxlength="100" autocomplete="off">
+                       placeholder="Ej.: A001, Arroz, Aceite" maxlength="100" autocomplete="off">
             </div>
             <div class="grupo-botones">
                 <button type="submit" class="btn btn-secundario">Buscar</button>

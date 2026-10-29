@@ -148,8 +148,11 @@ DROP PROCEDURE migrar_columnas;
 -- ADMIN   -> Admin#2026   (hash b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3)
 -- CAJERO  -> Cajero2026!  (hash 5cb3b5fd026da381d44a175815afdec4a13f6962d6c982cb61613b331ca9f943)
 INSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'admin', 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3', 'Administrador El Sol', 'ADMIN'\nWHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'admin');\nINSERT INTO usuario (usuario, clave, nombre, rol)
-SELECT 'cajero', '5cb3b5fd026da381d44a175815afdec4a13f6962d6c982cb61613b331ca9f943', 'Personal El Sol', 'CAJERO'\nWHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'cajero');
+SELECT 'admin', 'b5af2beb9b7fd5aa4eb21b61925bd3856793e54e0a39052fbcfaf5b477fd07f3', 'Administrador El Sol', 'ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'admin');
+INSERT INTO usuario (usuario, clave, nombre, rol)
+SELECT 'cajero', '5cb3b5fd026da381d44a175815afdec4a13f6962d6c982cb61613b331ca9f943', 'Personal El Sol', 'CAJERO'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE usuario = 'cajero');
 
 -- MIGRACION: si la base existia con las claves de prueba viejas ('1234',
 -- hash 03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4),
